@@ -151,12 +151,12 @@ void tambahBarang() {
     cin >> jmlBarang;
     cin.ignore();
 
-    detailBarang.push_back(namaBarang);
-    detailBarang.push_back(pilKategori);
-    detailBarang.push_back(to_string(jmlBarang));
-    detailBarang.push_back(hargaBarang);
+    detailBarang.push(namaBarang);
+    detailBarang.push(pilKategori);
+    detailBarang.push(to_string(jmlBarang));
+    detailBarang.push(hargaBarang);
     // push ke 2d
-    dataBarang.push_back(detailBarang);
+    dataBarang.push(detailBarang);
     cout<<hapus;
     cout<<garis;
     cout<<"==== DATA INPUT BARANG BARU ===="<<endl;
@@ -181,7 +181,7 @@ void tambahBarang() {
       for(int i = 0;i<dataBarang.size();i++){
         fetchExBarang(dataBarang[i][1]);
 
-        path.push_back(pathKategori+"/" + dataBarang[i][1] + "/barang/" + dataBarang[i][0] + ".txt");
+        path.push(pathKategori+"/" + dataBarang[i][1] + "/barang/" + dataBarang[i][0] + ".txt");
         ofstream outIsiBarang(path[i]);
         for(int j=0;j<stoi(dataBarang[i][2]);j++){
           // outIsiBarang<<j+1<<"|"<<tanggalBarang[k]<<endl;
@@ -190,7 +190,7 @@ void tambahBarang() {
         }
         outIsiBarang.close();
 
-        path.push_back(pathKategori+"/" + dataBarang[i][1] + "/" + dataBarang[i][1] + ".txt");
+        path.push(pathKategori+"/" + dataBarang[i][1] + "/" + dataBarang[i][1] + ".txt");
         
         ofstream outKategori(path[path.size()-1], ios::app);
         int jmlBarang = hitungLine(pathKategori+"/" + dataBarang[i][1] + "/" + dataBarang[i][1] + ".txt");
@@ -202,7 +202,7 @@ void tambahBarang() {
           <<"|"<<dataBarang[i][3]
         <<endl;
         outKategori.close();
-        path.pop_back();
+        path.pop();
       }
       cout<<"data berhasil di simpan!"<<endl;
       cin.ignore();
@@ -252,16 +252,16 @@ void tambahKategori(){
       cout<<garis;
       cout<<"masukkan nama kategori baru : ";
       input(kategori);
-      newPath.push_back(path+="/" + kategori);
+      newPath.push(path+="/" + kategori);
       cout<<garis;
-      newKategoriTmp.push_back(kategori);
+      newKategoriTmp.push(kategori);
       isValid = cekExKategori(path, newKategori, kategori);
       if(!isValid){
-        newPath.pop_back();
+        newPath.pop();
       } else{
-        newKategori.push_back(newKategoriTmp);
+        newKategori.push(newKategoriTmp);
       }
-      newKategoriTmp.pop_back();
+      newKategoriTmp.pop();
     } while (!isValid);
     
     cout<<"tambah data lagi?\n(y/n) > ";
@@ -327,7 +327,7 @@ void autoListAll(){
     }
     for(int i=0;i<kategori.size();i++){
       path = pathKategori + "/" + kategori[i][0] + "/" + kategori[i][0] + ".txt"; 
-      pathBuilder.push_back(path);
+      pathBuilder.push(path);
     }
     for(int i=0;i<pathBuilder.size();i++){
       line += hitungLine(pathBuilder[i]);
@@ -335,9 +335,9 @@ void autoListAll(){
     if(line != 0){
       for(int i=0;i<pathBuilder.size();i++){
         Array2D<string> data = loadData(pathBuilder[i]);
-        // Menggunakan push_back untuk menambahkan elemen-elemen dari data ke barang
+        // Menggunakan push untuk menambahkan elemen-elemen dari data ke barang
         for (int j = 0; j < data.size(); j++) {
-          barang.push_back(data[j]);
+          barang.push(data[j]);
         }
       }
       for(int i=0;i<barang.size();i++){
@@ -624,8 +624,8 @@ void updateKategori(){
         istringstream stream(line);
         getline(stream, id, '|');
         getline(stream, kategoriLine);
-        dataKategori.push_back(id);
-        dataKategori.push_back(kategoriLine);
+        dataKategori.push(id);
+        dataKategori.push(kategoriLine);
       }
       for(int i=0;i<dataKategori.size();i++){
         if(dataKategori[i] == kategori){

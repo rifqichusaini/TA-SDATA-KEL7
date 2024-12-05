@@ -1,11 +1,10 @@
 #include "backend.h"
 
 int main(){
-    cekDB();
+  cekDB();
 
-    Menu M;
-    M.menu();
-    
-    
-    return 0;
+  Menu M;
+  M.menu();
+  
+  return 0;
 }

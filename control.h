@@ -155,9 +155,9 @@ Array2D<string> loadData(string path){
     istringstream stream(line);
     Array1D<string> row;
     while (getline(stream, item, '|')) {
-      row.push_back(item);
+      row.push(item);
     }
-    rows.push_back(row);
+    rows.push(row);
   }
 
   return rows;
@@ -169,7 +169,7 @@ Array1D<string> bacaFolder(string path) {
   for (const auto& entry : fs::directory_iterator(path)) {
     if (fs::is_directory(entry.status())) {
       string isiFolder = entry.path().filename().string();
-      namaFolder.push_back(isiFolder);
+      namaFolder.push(isiFolder);
     }
   }
 
@@ -181,7 +181,7 @@ Array1D<string> bacaFile(string path) {
 
   for (const auto& entry : fs::directory_iterator(path)) {
     if (fs::is_regular_file(entry.status())) {
-      namaFolder.push_back(entry.path().filename().string());
+      namaFolder.push(entry.path().filename().string());
     }
   }
 
@@ -208,7 +208,7 @@ void fetchExBarang(string kategori) {
   for(int i=0;i<isiFile.size();i++){
     pathBuilder = "";
     pathBuilder += pathKategori + "/" + isiFile[i][2] + "/barang/" + isiFile[i][1] + ".txt";
-    path.push_back(pathBuilder);
+    path.push(pathBuilder);
   }
 
   int size = path.size();

@@ -26,7 +26,7 @@ class Menu : public User{
 private:
   int pilihan;
   Login L;
-  Logout Logout;
+  Logout Out;
 public:
   void menuAdmin();
   void menuUser();
@@ -87,7 +87,7 @@ public:
       } else {
         cout<<"database masih kosong\nsilahkan menunggu admin mengisi barang!"<<endl;
         cout<<garis;
-        Logout.logout(L);
+        Out.logout(L);
         jeda();
       }
     } else{
@@ -96,7 +96,7 @@ public:
       } else {
         cout<<"database masih kosong\nsilahkan menunggu admin mengisi barang!"<<endl;
         cout<<garis;
-        Logout.logout(L);
+        Out.logout(L);
         jeda();
       }
     }
@@ -122,7 +122,7 @@ void Menu::menuAdmin(){
     cout<<"masukkan pilihan : ";
     if(inputValidation(pilihan)){
       if(pilihan == 0){
-        Logout.logout(L);
+        Out.logout(L);
         menu();
       } else if(pilihan == 1){
         tambahBarang();
@@ -220,7 +220,7 @@ void Menu::menuUser(){
     cout<<"masukkan pilihan : ";
     if(inputValidation(pilihan)){
       if(pilihan == 0){
-        Logout.logout(L);
+        Out.logout(L);
         menu();
       } else if(pilihan == 1){
         addKeranjang(L);
@@ -282,7 +282,7 @@ void Menu::menuKasir(){
     cout<<"masukkan pilihan : ";
     if(inputValidation(pilihan)){
       if(pilihan == 0){
-        Logout.logout(L);
+        Out.logout(L);
         menu();
       } else if(pilihan == 1){
         lihatAntrian();

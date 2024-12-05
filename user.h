@@ -10,16 +10,16 @@ Array2D<string> fetchAllBarang(){
   }
   for(int i=0;i<kategori.size();i++){
     string path = pathKategori + "/" + kategori[i][0] + "/" + kategori[i][0] + ".txt"; 
-    pathBuilder.push_back(path);
+    pathBuilder.push(path);
   }
   for(int i=0;i<pathBuilder.size();i++){
     line += hitungLine(pathBuilder[i]);
   }
   for(int i=0;i<pathBuilder.size();i++){
     Array2D<string> data = loadData(pathBuilder[i]);
-    // Menggunakan loop manual untuk push_back setiap elemen data ke barangFix
+    // Menggunakan loop manual untuk push setiap elemen data ke barangFix
     for (int j = 0; j < data.size(); j++) {
-      barangFix.push_back(data[j]);
+      barangFix.push(data[j]);
     }
   }
 
@@ -124,7 +124,7 @@ void kurangiKeranjang(User &data){
                   showStokBarang.insert(showStokBarang.begin(), copyElement);
                   copyElementSize = copyElement.size();
                   for(int i=0;i<copyElementSize;i++){
-                    copyElement.pop_back();
+                    copyElement.pop();
                   }
                   break;
                 }
@@ -140,7 +140,7 @@ void kurangiKeranjang(User &data){
               showStokBarang.insert(showStokBarang.begin(), copyElement);
               copyElementSize = copyElement.size();
               for(int i=0;i<copyElementSize;i++){
-                copyElement.pop_back();
+                copyElement.pop();
               }
               for(int i=0;i<showStokBarang.size();i++){
                 showStokBarang[i].erase(showStokBarang[i].begin());
@@ -326,12 +326,12 @@ void addKeranjang(User &data){
                     } else{
                       Array1D<string> barangTmp;
                       int totalHarga;
-                      barangTmp.push_back(barangFix[i][1]);
-                      barangTmp.push_back(barangFix[i][2]);
-                      barangTmp.push_back(to_string(jml));
+                      barangTmp.push(barangFix[i][1]);
+                      barangTmp.push(barangFix[i][2]);
+                      barangTmp.push(to_string(jml));
                       totalHarga = jml * stoi(barangFix[i][4]);
-                      barangTmp.push_back(to_string(totalHarga));
-                      barangPilihan.push_back(barangTmp);
+                      barangTmp.push(to_string(totalHarga));
+                      barangPilihan.push(barangTmp);
                     }
                   } else{
                     invalidInput();
@@ -414,8 +414,11 @@ void checkout(User &data){
 	string pathFileKeranjang = pathKeranjang + "/" + data.getNamaUser() + ".txt";
   string pathFileBarang;
   bool isValidCheckout = true;
+  bool isPriority;
 
   if(hitungLine(pathFileKeranjang) != 0){
+    cout<<"apakah anda berkebutuhan khusus?\n(1 : ya | 0 : tidak) : ";
+    cin>>isPriority;
     Array2D<string> keranjang = loadData(pathFileKeranjang);
     Array2D<string> allBarang;
     
@@ -438,43 +441,105 @@ void checkout(User &data){
     
     if(isValidCheckout){
       Array1D<string> listAntrian;
+      Array1D<string> listAntrianPriority;
       Array2D<string> listId;
+      Array2D<string> listIdPriority;
 
       int jmlAntrian = 0;
+      int jmlAntrianPriority = 0;
 
       if(hitungLine(pathFileAntrian) != 0){
         string line;
         string id;
         string delimiter = " - ";
+        string delimiterPriority = "P - ";
 
+        ifstream bacaPriority(pathFileAntrian);
+        while (getline(bacaPriority, line)){
+          size_t pos = line.find(delimiterPriority);
+          if (pos != string::npos) {
+            id = line.substr(0, pos);
+            line.erase(0, pos + delimiterPriority.length());
+            listAntrianPriority.push(id);
+            listAntrianPriority.push(line);
+            listIdPriority.push(listAntrianPriority);
+            listAntrianPriority.pop();
+            listAntrianPriority.pop();
+          }
+        }
         ifstream baca(pathFileAntrian);
         while (getline(baca, line)){
           size_t pos = line.find(delimiter);
           if (pos != string::npos) {
             id = line.substr(0, pos);
             line.erase(0, pos + delimiter.length());
-            listAntrian.push_back(id);
-            listAntrian.push_back(line);
+            listAntrian.push(id);
+            listAntrian.push(line);
+            listId.push(listAntrian);
+            listAntrian.pop();
+            listAntrian.pop();
+            jmlAntrian++;
           }
-          listId.push_back(listAntrian);
-          listAntrian.pop_back();
-          listAntrian.pop_back();
         }
-        
-        jmlAntrian = stoi(listId[listId.size()-1][0]);
       }
-      
       string pathFileAntrianUser = pathKeranjang + "/" + data.getNamaUser() + ".txt";
-      string pathFileAntrianNew = pathAntrian + "/" + to_string(jmlAntrian + 1) + " - " +data.getNamaUser() + ".txt";
+      string pathFileAntrianNew;
+      // =============== fifo priority ==============
+      if(isPriority){
+        // mendapatkan nilai akhir
+        if(listIdPriority.size() != 0){
+          jmlAntrianPriority = stoi(listIdPriority[listIdPriority.size()-1][0]);
+        } else{
+          jmlAntrianPriority = jmlAntrian;
+        }
 
-      ofstream tulis(pathFileAntrian);
-      for(int i=0;i<listId.size();i++){
-        tulis<<listId[i][0]<<" - "<<listId[i][1]<<endl;
+        for(int i=0;i<listIdPriority.size();i++){
+          listId.erase(listId.begin());
+        }
+        pathFileAntrianNew = pathAntrian + "/" + to_string(jmlAntrianPriority + 1) + "P - " +data.getNamaUser() + ".txt";
+
+        ofstream tulis1(pathFileAntrian);
+        for(int i=0;i<listIdPriority.size();i++){
+          tulis1<<listIdPriority[i][0]<<"P - "<<listIdPriority[i][1]<<endl;
+        }
+        tulis1.close();
+        
+        ofstream tulisNew(pathFileAntrian, ios::app);
+        tulisNew<<to_string(jmlAntrianPriority + 1) + "P - " +data.getNamaUser() + ".txt"<<endl;
+
+        ofstream tulis2(pathFileAntrian, ios::app);
+        int j = jmlAntrianPriority;
+        j+=2;
+        for(int i=0;i<listId.size();i++){
+          tulis2<<j<<" - "<<listId[i][1]<<endl;
+          j++;
+        }
+        tulis2.close();
+
+        for(int i=listId.size()-1;i>=0;i--){
+          string oldQueue = pathAntrian + "/" + listId[i][0] + " - " + listId[i][1]; 
+          string newQueue = pathAntrian + "/" + to_string(j-1) + " - " + listId[i][1];
+          rename(oldQueue.c_str(), newQueue.c_str());
+          j--;
+        }
+      // ============================================
+      } else{
+        int antrianAkhir;
+        if(listId.size()!=0){
+          antrianAkhir = stoi(listId[listId.size()-1][0]);
+        } else{
+          antrianAkhir = 0;
+        }
+
+        ofstream tulis(pathFileAntrian);
+        pathFileAntrianNew = pathAntrian + "/" + to_string(antrianAkhir + 1) + " - " +data.getNamaUser() + ".txt";
+        for(int i=0;i<listId.size();i++){
+          tulis<<listId[i][0]<<" - "<<listId[i][1]<<endl;
+        }
+        tulis.close();
+        ofstream tulisNew(pathFileAntrian, ios::app);
+        tulisNew<<to_string(antrianAkhir + 1) + " - " +data.getNamaUser() + ".txt"<<endl;
       }
-      tulis.close();
-
-      ofstream tulisNew(pathFileAntrian, ios::app);
-      tulisNew<<to_string(jmlAntrian + 1) + " - " +data.getNamaUser() + ".txt"<<endl;
 
       fs::copy(pathFileAntrianUser, pathFileAntrianNew);
       remove(pathFileAntrianUser.c_str());
@@ -515,6 +580,7 @@ void checkout(User &data){
     jeda();
   }  
 }
+
 
 bool isDbExist(){
   Array1D<string> kategori = bacaFolder(pathKategori);
