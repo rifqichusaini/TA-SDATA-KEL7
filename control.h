@@ -48,7 +48,7 @@ string getTimestamp() {
 
   // Mengonversi waktu ke format yang diinginkan
   stringstream ss;
-  ss << put_time(&tm_now, "%Y-%m-%d %H:%M:%S");
+  ss << put_time(&tm_now, "%Y/%m/%d %H:%M");
 
   return ss.str();
 }
@@ -155,9 +155,9 @@ Array2D<string> loadData(string path){
     istringstream stream(line);
     Array1D<string> row;
     while (getline(stream, item, '|')) {
-      row.push(item);
+      row.push_back(item);
     }
-    rows.push(row);
+    rows.push_back(row);
   }
 
   return rows;
@@ -168,8 +168,7 @@ Array1D<string> bacaFolder(string path) {
 
   for (const auto& entry : fs::directory_iterator(path)) {
     if (fs::is_directory(entry.status())) {
-      string isiFolder = entry.path().filename().string();
-      namaFolder.push(isiFolder);
+      namaFolder.push_back(entry.path().filename().string());
     }
   }
 
@@ -181,7 +180,7 @@ Array1D<string> bacaFile(string path) {
 
   for (const auto& entry : fs::directory_iterator(path)) {
     if (fs::is_regular_file(entry.status())) {
-      namaFolder.push(entry.path().filename().string());
+      namaFolder.push_back(entry.path().filename().string());
     }
   }
 
@@ -208,7 +207,7 @@ void fetchExBarang(string kategori) {
   for(int i=0;i<isiFile.size();i++){
     pathBuilder = "";
     pathBuilder += pathKategori + "/" + isiFile[i][2] + "/barang/" + isiFile[i][1] + ".txt";
-    path.push(pathBuilder);
+    path.push_back(pathBuilder);
   }
 
   int size = path.size();
@@ -251,4 +250,35 @@ void invalidInput(){
   jeda();
 }
 
+// void vec2dToArr2d(const Array2D<string> &vec2d, string **&arr2d) {
+//     // Tentukan ukuran baris dan kolom
+//     int baris = vec2d.size();
+//     int kolom = baris > 0 ? vec2d[0].size() : 0;
+
+//     // Alokasi memori untuk array 2D dinamis
+//     arr2d = new string *[baris];
+//     for (int i = 0; i < baris; ++i) {
+//         arr2d[i] = new string[kolom];
+//     }
+
+//     // Salin nilai dari Array1D ke array 2D
+//     for (int i = 0; i < baris; ++i) {
+//         for (int j = 0; j < kolom; ++j) {
+//             arr2d[i][j] = vec2d[i][j];
+//         }
+//     }
+// }
+
+// void vecToArr(const Array1D<string> &vec, string *&arr) {
+//     // Tentukan ukuran array
+//     int ukuran = vec.size();
+
+//     // Alokasi memori untuk array dinamis
+//     arr = new string[ukuran];
+
+//     // Salin nilai dari Array1D ke array 1D
+//     for (int i = 0; i < ukuran; ++i) {
+//         arr[i] = vec[i];
+//     }
+// }
 
