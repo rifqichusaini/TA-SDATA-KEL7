@@ -26,6 +26,24 @@ void printGaris(Array1D<int> &maxCol, int konstanta){
   cout<<endl;
 }
 
+void printKeluar(Array1D<int> &maxCol, int konstanta, bool menu, bool kembali){
+  for(int i=1;i<maxCol.size();i++){
+    konstanta += maxCol[i];
+  }
+  konstanta -= maxCol[0];
+  konstanta -= 4;
+  cout<<"| ";
+  cout<<setw(maxCol[0])<<"0";
+  cout<<" |";
+  if(menu){
+    cout<<setiosflags(ios::left)<<setw(konstanta)<<" Menu";
+  } else{
+    cout<<setiosflags(ios::left)<<setw(konstanta)<<" Kembali";
+  }
+  cout<<" |";
+  cout<<endl;
+}
+
 void printData(Array2D<string> &vec, Array1D<string> &col, Array1D<int> &maxCol, int konstanta) {
   int baris = vec.size();
   int kolom = vec[0].size();
@@ -75,10 +93,17 @@ string getKategori(){
       printGaris(maxCol, konstanta);
       printData(row, col, maxCol, konstanta);
       printGaris(maxCol, konstanta);
+      printKeluar(maxCol, konstanta, true, false);
+      printGaris(maxCol, konstanta);
 
       file.close();
       cout<<"pilih id kategori : ";
       if(inputValidation(pilihan)){
+        if(pilihan == 0){
+          cin.ignore();
+          jeda();
+          return "";
+        }
         file.open(pathFileKategori);
         if(pilihan <= banyakKategori && pilihan >= 1){
           while (getline(file, line)){
@@ -153,17 +178,6 @@ string getJenis(string jenis){
     }  
   }
   return "";
-}
-
-void dataUserKosong(){
-  cout<<hapus;
-  cout<<garis;
-  cout<<"===== Database Masih kosong ====\n";
-  cout<<garis;
-  cout<<"silahkan tunggu admin mengisi barang!\n";
-  cout<<garis;
-  cin.ignore();
-  jeda();
 }
 
 void dataKosong(){
