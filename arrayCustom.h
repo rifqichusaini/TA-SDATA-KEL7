@@ -13,7 +13,7 @@ public:
 
   iterator erase(iterator posisi) {
   if (posisi < begin() || posisi >= end()) {
-    throw out_of_range("Iterator out of range");
+    throw out_of_range("Iterator diluar batas!");
   }
   
   // temp adalah posisi hapus
@@ -100,7 +100,7 @@ public:
   }
 
 
-  void push(T dataBaru){
+  void push_back(T dataBaru){
   // Alokasi array baru dengan ukuran bertambah
   T* newArr = new T[ukuran + 1];
   
@@ -123,7 +123,7 @@ public:
 }
 
   // menghapus element dari belakang
-  void pop(){
+  void pop_back(){
   T* newArr = new T[ukuran - 1];
   for(int i=0;i<ukuran-1;i++){
     newArr[i] = arr[i];
@@ -224,7 +224,7 @@ public:
 
     T& operator[](int kolom) {
       if (kolom >= ukuran_kolom) {
-        throw out_of_range("Column index out of range");
+        throw out_of_range("index colom diluar batas!");
       }
       return baris[kolom];
     }
@@ -238,7 +238,7 @@ public:
 
     iterator erase(iterator posisi) {
       if (posisi < begin() || posisi >= end()) {
-        throw out_of_range("Iterator out of range");
+        throw out_of_range("Iterator diluar batas!");
       }
 
       // Geser elemen-elemen ke kiri
@@ -258,7 +258,7 @@ public:
     operator Array1D<T>() const {
       Array1D<T> result;
       for(int i = 0; i < ukuran_kolom; i++) {
-        result.push(baris[i]);
+        result.push_back(baris[i]);
       }
       return result;
     }
@@ -266,7 +266,7 @@ public:
 
   Baris operator[](int index_baris) {
     if (index_baris >= baris) {
-      throw out_of_range("Row index out of range");
+      throw out_of_range("index row diluar batas!");
     }
     return Baris(arr[index_baris], kolom_sizes[index_baris]);
   }
@@ -279,7 +279,7 @@ public:
 
   iterator erase(iterator posisi) {
     if (posisi < begin() || posisi >= end()) {
-      throw out_of_range("Iterator out of range");
+      throw out_of_range("Iterator diluar batas!");
     }
 
     // Simpan pointer ke baris yang akan dihapus
@@ -341,8 +341,8 @@ public:
     baris++;
   }
 
-  // Push back untuk menambah baris baru dari Array1D
-  void push(const Array1D<T>& newRow) {
+  // push_back back untuk menambah baris baru dari Array1D
+  void push_back(const Array1D<T>& newRow) {
     // Buat array baru dengan ukuran baris + 1
     T** new_arr = new T*[baris + 1];
     int* new_kolom_sizes = new int[baris + 1];
@@ -372,10 +372,10 @@ public:
     baris++;
   }
 
-  // Pop back untuk menghapus baris terakhir
-  void pop() {
+  // pop_back back untuk menghapus baris terakhir
+  void pop_back() {
     if(baris == 0) {
-      throw out_of_range("Array is empty");
+      throw out_of_range("Array kosong");
     }
     
     // Hapus baris terakhir
