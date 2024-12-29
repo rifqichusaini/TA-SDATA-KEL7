@@ -33,7 +33,7 @@ bool cekExBarang(const string& kategori, const string& namaBarang, Array2D<strin
   return true;
 }
 
-void outBarang(Array2D<string> &vec, bool id = false, bool colKategori = false, bool totalHarga = false) {
+void outBarang(Array2D<string> &vec, bool id = false, bool colKategori = false, bool totalHarga = false, bool menu = false, bool keluar = false) {
   int konstanta = 4;
   Array1D<int> maxCol;
   Array1D<string> col;
@@ -54,6 +54,14 @@ void outBarang(Array2D<string> &vec, bool id = false, bool colKategori = false, 
   printGaris(maxCol, konstanta);
   printData(vec, col, maxCol, konstanta);
   printGaris(maxCol, konstanta);
+  if(menu){
+    printKeluar(maxCol, konstanta, true, false);
+    printGaris(maxCol, konstanta);
+  }
+  if(keluar){
+    printKeluar(maxCol, konstanta, false, true);
+    printGaris(maxCol, konstanta);
+  }
 }
 
 bool cekExKategori(string path, Array2D<string> newKategori, string kategori){
@@ -108,31 +116,35 @@ void tambahBarang() {
         cout << "Pilih kategori barang baru" << endl;
         cout << garis;
         pilKategori = getKategori();
-        string tmp = pathKategori+"/"+pilKategori+"/"+pilKategori+".txt";
-        cout<<hapus;
-        if(dataBarang.size() != 0){        
-          cout<<garis;
-          cout<<"List barang yang sudah diinput\n";
-          cout<<garis;
-          outBarang(dataBarang);
-        } if(hitungLine(tmp) != 0){
-          cout<<garis;
-          cout<<"Barang yang sudah tersedia di "<<pilKategori<<endl;
-          cout<<garis;
-          exBarang = loadData(tmp);
-          for(int i=0;i<exBarang.size();i++){
-            exBarang[i].erase(exBarang[i].begin() + 0);
-            exBarang[i].erase(exBarang[i].begin() + 1);
+        if(pilKategori == ""){
+          return;
+        } else{
+          string tmp = pathKategori+"/"+pilKategori+"/"+pilKategori+".txt";
+          cout<<hapus;
+          if(dataBarang.size() != 0){        
+            cout<<garis;
+            cout<<"List barang yang sudah diinput\n";
+            cout<<garis;
+            outBarang(dataBarang);
+          } if(hitungLine(tmp) != 0){
+            cout<<garis;
+            cout<<"Barang yang sudah tersedia di "<<pilKategori<<endl;
+            cout<<garis;
+            exBarang = loadData(tmp);
+            for(int i=0;i<exBarang.size();i++){
+              exBarang[i].erase(exBarang[i].begin() + 0);
+              exBarang[i].erase(exBarang[i].begin() + 1);
+            }
+            outBarang(exBarang, false, true);
+          } if(hitungLine(tmp) == 0 && dataBarang.size() == 0){
+            cout<<garis;
+            cout<<"Barang di "<<pilKategori<<" masih kosong.\n";
+            cout<<garis;
           }
-          outBarang(exBarang, false, true);
-        } if(hitungLine(tmp) == 0 && dataBarang.size() == 0){
-          cout<<garis;
-          cout<<"Barang di "<<pilKategori<<" masih kosong.\n";
-          cout<<garis;
+          cin.ignore();
+          cout << "Masukkan Nama barang baru di "<<pilKategori<<" : ";
+          input(namaBarang);
         }
-        cin.ignore();
-        cout << "Masukkan Nama barang baru di "<<pilKategori<<" : ";
-        input(namaBarang);
       } else{
         cout<<garis;
         cout<<"Data Kategori Kosong!\nsilahkan isi data kategori terlebih dahulu!"<<endl;
@@ -151,12 +163,12 @@ void tambahBarang() {
     cin >> jmlBarang;
     cin.ignore();
 
-    detailBarang.push(namaBarang);
-    detailBarang.push(pilKategori);
-    detailBarang.push(to_string(jmlBarang));
-    detailBarang.push(hargaBarang);
+    detailBarang.push_back(namaBarang);
+    detailBarang.push_back(pilKategori);
+    detailBarang.push_back(to_string(jmlBarang));
+    detailBarang.push_back(hargaBarang);
     // push ke 2d
-    dataBarang.push(detailBarang);
+    dataBarang.push_back(detailBarang);
     cout<<hapus;
     cout<<garis;
     cout<<"==== DATA INPUT BARANG BARU ===="<<endl;
@@ -181,7 +193,7 @@ void tambahBarang() {
       for(int i = 0;i<dataBarang.size();i++){
         fetchExBarang(dataBarang[i][1]);
 
-        path.push(pathKategori+"/" + dataBarang[i][1] + "/barang/" + dataBarang[i][0] + ".txt");
+        path.push_back(pathKategori+"/" + dataBarang[i][1] + "/barang/" + dataBarang[i][0] + ".txt");
         ofstream outIsiBarang(path[i]);
         for(int j=0;j<stoi(dataBarang[i][2]);j++){
           // outIsiBarang<<j+1<<"|"<<tanggalBarang[k]<<endl;
@@ -190,7 +202,7 @@ void tambahBarang() {
         }
         outIsiBarang.close();
 
-        path.push(pathKategori+"/" + dataBarang[i][1] + "/" + dataBarang[i][1] + ".txt");
+        path.push_back(pathKategori+"/" + dataBarang[i][1] + "/" + dataBarang[i][1] + ".txt");
         
         ofstream outKategori(path[path.size()-1], ios::app);
         int jmlBarang = hitungLine(pathKategori+"/" + dataBarang[i][1] + "/" + dataBarang[i][1] + ".txt");
@@ -202,7 +214,7 @@ void tambahBarang() {
           <<"|"<<dataBarang[i][3]
         <<endl;
         outKategori.close();
-        path.pop();
+        path.pop_back();
       }
       cout<<"data berhasil di simpan!"<<endl;
       cin.ignore();
@@ -240,7 +252,7 @@ void tambahKategori(){
         cout<<garis;
         outKategori(newKategori);
       }
-       if(hitungLine(pathFileKategori) != 0){
+      if(hitungLine(pathFileKategori) != 0){
         cout<<"= List Kategori yang sudah ada =\n";
         cout<<garis;
         outKategori(exKategori);
@@ -252,16 +264,16 @@ void tambahKategori(){
       cout<<garis;
       cout<<"masukkan nama kategori baru : ";
       input(kategori);
-      newPath.push(path+="/" + kategori);
+      newPath.push_back(path+="/" + kategori);
       cout<<garis;
-      newKategoriTmp.push(kategori);
+      newKategoriTmp.push_back(kategori);
       isValid = cekExKategori(path, newKategori, kategori);
       if(!isValid){
-        newPath.pop();
+        newPath.pop_back();
       } else{
-        newKategori.push(newKategoriTmp);
+        newKategori.push_back(newKategoriTmp);
       }
-      newKategoriTmp.pop();
+      newKategoriTmp.pop_back();
     } while (!isValid);
     
     cout<<"tambah data lagi?\n(y/n) > ";
@@ -311,6 +323,49 @@ void tambahKategori(){
   jeda();
 }
 
+// void autoListAll(){
+//   fetchExKategori();
+//   Array1D<string> pathBuilder;
+//   string path;
+//   Array2D<string> kategori;
+//   Array2D<string> barang;
+//   int line=0;
+
+//   if(hitungLine(pathFileKategori)!=0){
+//     cout<<hapus;
+//     kategori = loadData(pathFileKategori);
+//     for(int i=0;i<kategori.size();i++){
+//       kategori[i].erase(kategori[i].begin() + 0);
+//     }
+//     for(int i=0;i<kategori.size();i++){
+//       path = pathKategori + "/" + kategori[i][0] + "/" + kategori[i][0] + ".txt"; 
+//       pathBuilder.push_back(path);
+//     }
+//     for(int i=0;i<pathBuilder.size();i++){
+//       line += hitungLine(pathBuilder[i]);
+//     }
+//     if(line != 0){
+//       for(int i=0;i<pathBuilder.size();i++){
+//         Array2D<string> data = loadData(pathBuilder[i]);
+//         barang.insert(barang.end(), data.begin(), data.end());
+//       }
+//       for(int i=0;i<barang.size();i++){
+//         barang[i].erase(barang[i].begin() + 0);
+//       }
+//       cout<<garis;
+//       cout<<"List semua barang yang tersedia di database\n";
+//       cout<<garis;
+//       outBarang(barang);
+//       cin.ignore();
+//       jeda();
+//     } else{
+//       dataKosong();
+//     }
+//   } else {
+//     dataKosong();
+//   }
+// }
+
 void autoListAll(){
   fetchExKategori();
   Array1D<string> pathBuilder;
@@ -322,22 +377,39 @@ void autoListAll(){
   if(hitungLine(pathFileKategori)!=0){
     cout<<hapus;
     kategori = loadData(pathFileKategori);
+    
     for(int i=0;i<kategori.size();i++){
       kategori[i].erase(kategori[i].begin() + 0);
     }
     for(int i=0;i<kategori.size();i++){
       path = pathKategori + "/" + kategori[i][0] + "/" + kategori[i][0] + ".txt"; 
-      pathBuilder.push(path);
+      pathBuilder.push_back(path);
     }
     for(int i=0;i<pathBuilder.size();i++){
       line += hitungLine(pathBuilder[i]);
     }
     if(line != 0){
+      // for(int i=0;i<pathBuilder.size();i++){
+      //   Array2D<string> data = loadData(pathBuilder[i]);
+      //   // Menggunakan push_back untuk menambahkan elemen-elemen dari data ke barang
+      //   for (const auto& item : data) {
+      //     barang.push_back(item);
+      //   }
+      // }
+      // for(int i=0;i<barang.size();i++){
+      //   barang[i].erase(barang[i].begin() + 0);
+      // }
+      // cout<<garis;
+      // cout<<"List semua barang yang tersedia di database\n";
+      // cout<<garis;
+      // outBarang(barang);
+      // cin.ignore();
+      // jeda();
       for(int i=0;i<pathBuilder.size();i++){
         Array2D<string> data = loadData(pathBuilder[i]);
         // Menggunakan push untuk menambahkan elemen-elemen dari data ke barang
         for (int j = 0; j < data.size(); j++) {
-          barang.push(data[j]);
+          barang.push_back(data[j]);
         }
       }
       for(int i=0;i<barang.size();i++){
@@ -358,6 +430,7 @@ void autoListAll(){
 }
 
 
+
 void hapusBarang(){
   string pilihan;
   string kategori;
@@ -368,45 +441,55 @@ void hapusBarang(){
   if(hitungLine(pathFileKategori)!=0){
     do{
       kategori = getKategori();
-      path = pathKategori + "/" + kategori + "/" + kategori + ".txt";
-      if(hitungLine(path) != 0){
-        barang = loadData(path);
-      
-        outBarang(barang, true);
-        cout<<"pilih id barang yg ingin dihapus : ";
-        cin>>pilihan;
+      if(kategori == ""){
+        return;
+      } else{
+        
+        path = pathKategori + "/" + kategori + "/" + kategori + ".txt";
+        if(hitungLine(path) != 0){
+          barang = loadData(path);
+        
+          outBarang(barang, true, true, false, true);
+          cout<<"pilih id barang yg ingin dihapus : ";
+          cin>>pilihan;
 
-        if(stoi(pilihan) <= 0 || stoi(pilihan) > hitungLine(path)){
-          cout<<"masukkan id yang sesuai dengan tabel\n";
-          isLoop = true;
-          cin.ignore();
-          jeda();
-        } else{
-          for(int i=0;i<barang.size();i++){
-            if(pilihan == barang[i][0]){
-              cout<<"apakah anda yakin ingin menghapus "
-                <<barang[i][1]
-                <<" ?\nanda tidak bisa mengembalikan data yang sdh di hapus\n(y/n) > ";
-              cin>>pilihan;
-              if(pilihan == "y" || pilihan == "Y"){
-                cout<<barang[i][1]<<" telah berhasil di hapus!"<<endl;
-                pathBarang = pathKategori + "/" + kategori + "/barang/" + barang[i][1] + ".txt";
-                barang.erase(barang.begin() + i);
-                ofstream update(path);
-                for(int j=0;j<barang.size();j++){
-                  update<<j+1<<"|"<<barang[j][1]<<"|"
-                    <<barang[j][2]<<"|"<<barang[j][3]<<"|"
-                    <<barang[j][4]<<endl;
+          if(stoi(pilihan) <= 0 || stoi(pilihan) > hitungLine(path)){
+            if(stoi(pilihan) == 0){
+              cin.ignore();
+              jeda();
+            } else{
+              cout<<"masukkan id yang sesuai dengan tabel\n";
+              isLoop = true;
+              cin.ignore();
+              jeda();
+            }
+          } else{
+            for(int i=0;i<barang.size();i++){
+              if(pilihan == barang[i][0]){
+                cout<<"apakah anda yakin ingin menghapus "
+                  <<barang[i][1]
+                  <<" ?\nanda tidak bisa mengembalikan data yang sdh di hapus\n(y/n) > ";
+                cin>>pilihan;
+                if(pilihan == "y" || pilihan == "Y"){
+                  cout<<barang[i][1]<<" telah berhasil di hapus!"<<endl;
+                  pathBarang = pathKategori + "/" + kategori + "/barang/" + barang[i][1] + ".txt";
+                  barang.erase(barang.begin() + i);
+                  ofstream update(path);
+                  for(int j=0;j<barang.size();j++){
+                    update<<j+1<<"|"<<barang[j][1]<<"|"
+                      <<barang[j][2]<<"|"<<barang[j][3]<<"|"
+                      <<barang[j][4]<<endl;
+                  }
+                  remove(pathBarang.c_str());
+                  cin.ignore();
+                  jeda();
                 }
-                remove(pathBarang.c_str());
-                cin.ignore();
-                jeda();
               }
             }
           }
+        } else{
+          dataKosong();
         }
-      } else{
-        dataKosong();
       }
     } while (isLoop);
   } else{
@@ -417,30 +500,34 @@ void hapusBarang(){
 void hapusKategori(){
   if(hitungLine(pathFileKategori) != 0){
     string kategori = getKategori();
-    string path = pathKategori + "/" + kategori + "/" + kategori + ".txt";
-    string pathHapus = pathKategori + "/" + kategori;
-    string konf;
-    Array2D<string> barang = loadData(path);
-    for(int i=0;i<barang.size();i++){
-      barang[i].erase(barang[i].begin() + 0);
-      barang[i].erase(barang[i].begin() + 1);
-    }
-    if(hitungLine(path) != 0){
-      cout<<"isi kategori "<<kategori<<endl;
-      outBarang(barang, false, true);
-      cout<<"apakah anda ingin menghapus kategori "<<
-        kategori<<" beserta isinya?\n(y/n) > ";
+    if(kategori == ""){
+      return;
     } else{
-      cout<<"apakah anda ingin menghapus kategori "<<
-        kategori<<"?\n(y/n) > ";
-    }
-    cin>>konf;
-    if(konf == "y" || konf == "Y"){
-      fs::remove_all(pathHapus);
-      cout<<"kategori "<<kategori<<" berhasil dihapus!\n";
-      fetchExKategori();
-      cin.ignore();
-      jeda();
+      string path = pathKategori + "/" + kategori + "/" + kategori + ".txt";
+      string pathHapus = pathKategori + "/" + kategori;
+      string konf;
+      Array2D<string> barang = loadData(path);
+      for(int i=0;i<barang.size();i++){
+        barang[i].erase(barang[i].begin() + 0);
+        barang[i].erase(barang[i].begin() + 1);
+      }
+      if(hitungLine(path) != 0){
+        cout<<"isi kategori "<<kategori<<endl;
+        outBarang(barang, false, true);
+        cout<<"apakah anda ingin menghapus kategori "<<
+          kategori<<" beserta isinya?\n(y/n) > ";
+      } else{
+        cout<<"apakah anda ingin menghapus kategori "<<
+          kategori<<"?\n(y/n) > ";
+      }
+      cin>>konf;
+      if(konf == "y" || konf == "Y"){
+        fs::remove_all(pathHapus);
+        cout<<"kategori "<<kategori<<" berhasil dihapus!\n";
+        fetchExKategori();
+        cin.ignore();
+        jeda();
+      }
     }
   } else {
     dataKosong();
@@ -457,31 +544,35 @@ void listAll(){
 
     cout<<garis;
     pilKategori = getKategori();
+    if(pilKategori == ""){
+      return;
+    } else{  
+      pathBuilder += pathKategori + "/" +pilKategori+ "/" + pilKategori + ".txt";
+      fetchExBarang(pilKategori);
+      kategori = loadData(pathBuilder);
+      for(int i=0;i<kategori.size();i++){
+        kategori[i].erase(kategori[i].begin());
+        kategori[i].erase(kategori[i].begin() + 1);
+      }
+      if(hitungLine(pathBuilder) != 0){
+        cout<<hapus;
+        cout<<garis;
+        cout<<"List barang yang tersedia di "<<pilKategori<<endl;
+        cout<<garis;
+        outBarang(kategori, false, true);
+      } else{
+        cout<<hapus;
+        cout<<garis;
+        cout<<"Data "<<pilKategori<<" Masih kosong\n";
+        cout<<garis;
+        cout<<"silahkan isi data terlebih dahulu!\n";
+        cout<<garis;
+      }
+      cin.ignore();
+      jeda();
+    } 
+  }
 
-    pathBuilder += pathKategori + "/" +pilKategori+ "/" + pilKategori + ".txt";
-    fetchExBarang(pilKategori);
-    kategori = loadData(pathBuilder);
-    for(int i=0;i<kategori.size();i++){
-      kategori[i].erase(kategori[i].begin());
-      kategori[i].erase(kategori[i].begin() + 1);
-    }
-    if(hitungLine(pathBuilder) != 0){
-      cout<<hapus;
-      cout<<garis;
-      cout<<"List barang yang tersedia di "<<pilKategori<<endl;
-      cout<<garis;
-      outBarang(kategori, false, true);
-    } else{
-      cout<<hapus;
-      cout<<garis;
-      cout<<"Data "<<pilKategori<<" Masih kosong\n";
-      cout<<garis;
-      cout<<"silahkan isi data terlebih dahulu!\n";
-      cout<<garis;
-    }
-    cin.ignore();
-    jeda();
-  } 
   
   if(hitungLine(pathFileKategori) == 0 && kategori.size() == 0){
     dataKosong();
@@ -498,44 +589,54 @@ void updateStock(){
   Array2D<string> dataBarang;
   if(hitungLine(pathFileKategori) != 0){
     kategori = getKategori();
-    pathUpdate = pathKategori + "/" + kategori + "/" + kategori + ".txt";
-    dataBarang = loadData(pathUpdate);
-    outBarang(dataBarang, true);
-    cout<<"pilih id : ";
-    cin>>id;
-    if(id <= 0 || id > dataBarang.size()){
-      cout<<"masukkan id yang valid!"<<endl;
+    if(kategori == ""){
+      return;
     } else{
-      for(int i=0;i<dataBarang.size();i++){
-        if(dataBarang[i][0] == to_string(id)){
-          cout<<"masukkan jumlah data baru : ";
-          cin>>newStock;
-          cout<<"apakah anda ingin menyimpan data?\n(y/n) > "; 
-          cin>>konf;
-          if(konf == 'y' || konf == 'Y'){
-            pathUpdate = pathKategori + "/" + kategori + "/barang/" + dataBarang[i][1] + ".txt";
-            int jmlExData = hitungLine(pathUpdate);
-            string idAkhir = "0";
-            if(jmlExData != 0){
-              ifstream bacaFile(pathUpdate);
-              for(int i=0;i<jmlExData;i++){
-                getline(bacaFile, idAkhir);
+      pathUpdate = pathKategori + "/" + kategori + "/" + kategori + ".txt";
+      dataBarang = loadData(pathUpdate);
+      outBarang(dataBarang, true, true, false, true);
+      cout<<"pilih id : ";
+      cin>>id;
+      if(id <= 0 || id > dataBarang.size()){
+        if(id == 0){
+          cin.ignore();
+          jeda();
+          return;
+        } else{
+          cout<<"masukkan id yang valid!"<<endl;
+        }
+      } else{
+        for(int i=0;i<dataBarang.size();i++){
+          if(dataBarang[i][0] == to_string(id)){
+            cout<<"masukkan jumlah data baru : ";
+            cin>>newStock;
+            cout<<"apakah anda ingin menyimpan data?\n(y/n) > "; 
+            cin>>konf;
+            if(konf == 'y' || konf == 'Y'){
+              pathUpdate = pathKategori + "/" + kategori + "/barang/" + dataBarang[i][1] + ".txt";
+              int jmlExData = hitungLine(pathUpdate);
+              string idAkhir = "0";
+              if(jmlExData != 0){
+                ifstream bacaFile(pathUpdate);
+                for(int i=0;i<jmlExData;i++){
+                  getline(bacaFile, idAkhir);
+                }
               }
+              ofstream updateFile(pathUpdate,ios::app);
+              
+              int totalStock = newStock+stoi(idAkhir)+1;
+              for(int i=stoi(idAkhir)+1;i<totalStock;i++){
+                updateFile<<i<<endl;
+              }
+              fetchExBarang(kategori);
+              cout<<"jumlah stok berhasil diupdate!"<<endl;
             }
-            ofstream updateFile(pathUpdate,ios::app);
-            
-            int totalStock = newStock+stoi(idAkhir)+1;
-            for(int i=stoi(idAkhir)+1;i<totalStock;i++){
-              updateFile<<i<<endl;
-            }
-            fetchExBarang(kategori);
-            cout<<"jumlah stok berhasil diupdate!"<<endl;
           }
         }
       }
+      cin.ignore();
+      jeda();
     }
-    cin.ignore();
-    jeda();
   }
 }
 
@@ -549,53 +650,63 @@ void updateNama(){
   Array2D<string> dataBarang;
   if(hitungLine(pathFileKategori) != 0){
     kategori = getKategori();
-    pathUpdate = pathKategori + "/" + kategori + "/" + kategori + ".txt";
-    dataBarang = loadData(pathUpdate);
-    outBarang(dataBarang, true);
-    cout<<"pilih id : ";
-    cin>>id;
-    if(id <= 0 || id > dataBarang.size()){
-      cout<<"masukkan id yang valid!"<<endl;
+    if(kategori == ""){
+      return;
     } else{
-      for(int i=0;i<dataBarang.size();i++){
-        if(dataBarang[i][0] == to_string(id)){
+      pathUpdate = pathKategori + "/" + kategori + "/" + kategori + ".txt";
+      dataBarang = loadData(pathUpdate);
+      outBarang(dataBarang, true, true, false, true);
+      cout<<"pilih id : ";
+      cin>>id;
+      if(id <= 0 || id > dataBarang.size()){
+        if(id == 0){
           cin.ignore();
-          cout<<"masukkan Nama barang baru : ";
-          input(newNama);
-          cout<<"apakah anda ingin mengganti data?\n(y/n) > "; 
-          cin>>konf;
-          if(konf == 'y' || konf == 'Y'){
-            string oldNamaFile = pathKategori + "/" + kategori + "/barang/" + dataBarang[i][1] + ".txt";
-            string newNamaFile = pathKategori + "/" + kategori + "/barang/" + newNama + ".txt";
-            dataBarang[i][1] = newNama;
-            ofstream updateData(pathUpdate);
-            for(int i=0;i<dataBarang.size();i++){
-              updateData<<
-                dataBarang[i][0]<<"|"<<
-                dataBarang[i][1]<<"|"<<
-                dataBarang[i][2]<<"|"<<
-                dataBarang[i][3]<<"|"<<
-                dataBarang[i][4]<<"|"<<
-              endl;
-            }
+          jeda();
+          return;
+        } else{
+          cout<<"masukkan id yang valid!"<<endl;
+        }
+      } else{
+        for(int i=0;i<dataBarang.size();i++){
+          if(dataBarang[i][0] == to_string(id)){
+            cin.ignore();
+            cout<<"masukkan Nama barang baru : ";
+            input(newNama);
+            cout<<"apakah anda ingin mengganti data?\n(y/n) > "; 
+            cin>>konf;
+            if(konf == 'y' || konf == 'Y'){
+              string oldNamaFile = pathKategori + "/" + kategori + "/barang/" + dataBarang[i][1] + ".txt";
+              string newNamaFile = pathKategori + "/" + kategori + "/barang/" + newNama + ".txt";
+              dataBarang[i][1] = newNama;
+              ofstream updateData(pathUpdate);
+              for(int i=0;i<dataBarang.size();i++){
+                updateData<<
+                  dataBarang[i][0]<<"|"<<
+                  dataBarang[i][1]<<"|"<<
+                  dataBarang[i][2]<<"|"<<
+                  dataBarang[i][3]<<"|"<<
+                  dataBarang[i][4]<<"|"<<
+                endl;
+              }
 
-            if(rename(oldNamaFile.c_str(), newNamaFile.c_str())==0){
-              cout<<"Data berhasil disimpan!"<<endl;
-            } else {
-              cout<<"Data gagal disimpan!"<<endl;
+              if(rename(oldNamaFile.c_str(), newNamaFile.c_str())==0){
+                cout<<"Data berhasil disimpan!"<<endl;
+              } else {
+                cout<<"Data gagal disimpan!"<<endl;
+              }
             }
           }
         }
       }
+      cin.ignore();
+      jeda();
     }
-    cin.ignore();
-    jeda();
   }
 }
 
 void updateKategori(){
-  fetchExKategori();
-  string id, kategoriLine;
+  fetchExKategori(); 
+  string id, kategoriBarang, namaBarang, hargaBarang, jmlBarang;
   string newKategori;
   char konf;
   string kategori;
@@ -603,46 +714,67 @@ void updateKategori(){
   Array2D<string> dataBarang;
   if(hitungLine(pathFileKategori) != 0){
     kategori = getKategori();
-    cin.ignore();
-    cout<<"masukkan Nama barang baru : ";
-    input(newKategori);
-    cout<<"apakah anda ingin mengganti data?\n(y/n) > "; 
-    cin>>konf;
+    if(kategori == ""){
+      return;
+    } else{      
+      cin.ignore();
+      cout<<"masukkan Nama kategori baru : ";
+      input(newKategori);
+      cout<<"apakah anda ingin mengganti data?\n(y/n) > "; 
+      cin>>konf;
 
-    if(konf == 'y' || konf == 'Y'){
-      string oldNamaKategori = pathKategori + "/" + kategori;
-      string newNamaKategori = pathKategori + "/" + newKategori;
-      if(rename(oldNamaKategori.c_str(), newNamaKategori.c_str())==0){
-        cout<<"Data berhasil disimpan!"<<endl;
-      } else {
-        cout<<"Data gagal disimpan!"<<endl;
-      }
-      Array1D<string> dataKategori;
-      string line;
-      ifstream bacaKategori(pathFileKategori);
-      while (getline(bacaKategori, line)){
-        istringstream stream(line);
-        getline(stream, id, '|');
-        getline(stream, kategoriLine);
-        dataKategori.push(id);
-        dataKategori.push(kategoriLine);
-      }
-      for(int i=0;i<dataKategori.size();i++){
-        if(dataKategori[i] == kategori){
-          dataKategori[i] = newKategori;
+      if(konf == 'y' || konf == 'Y'){
+        string oldNamaKategori = pathKategori + "/" + kategori;
+        string newNamaKategori = pathKategori + "/" + newKategori;
+        rename(oldNamaKategori.c_str(), newNamaKategori.c_str());
+        oldNamaKategori = pathKategori + "/" + newKategori + "/" + kategori + ".txt";
+        newNamaKategori = pathKategori + "/" + newKategori + "/" + newKategori + ".txt";
+        if(rename(oldNamaKategori.c_str(), newNamaKategori.c_str())==0){
+          cout<<"Data berhasil disimpan!"<<endl;
+        } else {
+          cout<<"Data gagal disimpan!"<<endl;
         }
-      }
-      ofstream updateData(pathFileKategori);
-      for(int i=0;i<dataKategori.size();i++){
-        updateData<<
-          dataKategori[i]<<"|"<<
-          dataKategori[++i]<<"|"<<
-        endl;
-      }
+        Array1D<string> dataKategori;
+        string line;
+        ifstream bacaKategori(newNamaKategori);
+        while (getline(bacaKategori, line)){
+          istringstream stream(line);
+          getline(stream, id, '|');
+          dataKategori.push_back(id);
+          getline(stream, namaBarang, '|');
+          dataKategori.push_back(namaBarang);
+          getline(stream, kategoriBarang, '|');
+          dataKategori.push_back(kategoriBarang);
+          getline(stream, hargaBarang, '|');
+          dataKategori.push_back(hargaBarang);
+          getline(stream, jmlBarang, '|');
+          dataKategori.push_back(jmlBarang);
+          dataBarang.push_back(dataKategori);
+          for(int i=0;i<5;i++){
+            dataKategori.pop_back();
+          }
+        }
+        for(int i=0;i<dataBarang.size();i++){
+          if(dataBarang[i][2] == kategori){
+            dataBarang[i][2] = newKategori;
+          }
+        }
+        ofstream updateData(newNamaKategori);
+        for(int j=0;j<dataBarang.size();j++){
+          for(int k=0;k<dataBarang[j].size();k++){
+            updateData<<dataBarang[j][k];
+            if(dataBarang[j].size() - 1 != k){
+              updateData<<"|";
+            }
+          }
+          updateData<<endl;
+        }
 
+        fetchExKategori();
+      }
+      cin.ignore();
+      jeda();
     }
-    cin.ignore();
-    jeda();
   } else {
     cout<<"data kosong!"<<endl;
     cin.ignore();
