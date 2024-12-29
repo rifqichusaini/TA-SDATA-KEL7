@@ -10,16 +10,16 @@ Array2D<string> fetchAllBarang(){
   }
   for(int i=0;i<kategori.size();i++){
     string path = pathKategori + "/" + kategori[i][0] + "/" + kategori[i][0] + ".txt"; 
-    pathBuilder.push(path);
+    pathBuilder.push_back(path);
   }
   for(int i=0;i<pathBuilder.size();i++){
     line += hitungLine(pathBuilder[i]);
   }
   for(int i=0;i<pathBuilder.size();i++){
     Array2D<string> data = loadData(pathBuilder[i]);
-    // Menggunakan loop manual untuk push setiap elemen data ke barangFix
+    // Menggunakan loop manual untuk push_back setiap elemen data ke barangFix
     for (int j = 0; j < data.size(); j++) {
-      barangFix.push(data[j]);
+      barangFix.push_back(data[j]);
     }
   }
 
@@ -46,28 +46,66 @@ void listKeranjang(User &data){
 void hapusKeranjang(User &data){
   int pilId;
   string konf;
+  string pathFileBarang;
   string pathBuilder;
   pathBuilder += pathKeranjang + "/" + data.getNamaUser();
   pathBuilder += ".txt";
   if(hitungLine(pathBuilder) != 0){
     Array2D<string> isiKeranjang = loadData(pathBuilder);
-    outBarang(isiKeranjang, true);
+    outBarang(isiKeranjang, true, false, false, true);
     cout<<"pilih id barang yg ingin dihapus : ";
     if(inputValidation(pilId)){
       if(pilId <= 0 || pilId > isiKeranjang.size()){
-        cout<<"pilih id yang valid!"<<endl;
-        cin.ignore();
-        jeda();
+        if(pilId == 0){
+          cin.ignore();
+          jeda();
+          return;
+        } else{
+          cout<<"pilih id yang valid!"<<endl;
+          cin.ignore();
+          jeda();
+        }
       } else{
         for(int i=0;i<isiKeranjang.size();i++){
           if(to_string(pilId) == isiKeranjang[i][0]){
             cout<<"apakah anda yakin ingin menghapus "<<isiKeranjang[i][1]<<"?\n(y/n) > ";
             cin>>konf;
-            if(konf == "y" || konf == "Y"){           
+            if(konf == "y" || konf == "Y"){
+              pathFileBarang += pathKategori + "/" + isiKeranjang[i][2] + "/barang/" + isiKeranjang[i][1] + ".txt";
+              int jmlHapusBarang = stoi(isiKeranjang[i][3]);
+              // ================================
+              int idAwalBarang = 0;
+              int stokBarang = 0;
+              int jmlTotalHapusBarang = 0;
+              if(hitungLine(pathFileBarang) != 0){
+                stokBarang = hitungLine(pathFileBarang);
+                ifstream bacaExBarang(pathFileBarang);
+                string line;
+                while (getline(bacaExBarang, line)){
+                  idAwalBarang = stoi(line);
+                  break;
+                }
+                
+                ofstream hapusBarang(pathFileBarang);
+                jmlTotalHapusBarang = jmlHapusBarang + stokBarang;
+                idAwalBarang -= jmlHapusBarang;
+                for(int i=0;i<jmlTotalHapusBarang;i++){
+                  hapusBarang<<idAwalBarang<<endl;
+                  idAwalBarang++;
+                }
+              } else{
+                ofstream hapusBarang(pathFileBarang);
+                for(int i=0;i<jmlHapusBarang;i++){
+                  hapusBarang<<i+1<<endl;
+                }
+              }
+              fetchExBarang(isiKeranjang[i][2]);
+              // ==============================
               isiKeranjang.erase(isiKeranjang.begin()+i);
               for(int j=0;j<isiKeranjang.size();j++){
-                isiKeranjang[j].erase(isiKeranjang[j].begin() + 0);
+                isiKeranjang[j].erase(isiKeranjang[j].begin());
               }
+              // ================================  
               ofstream updateKeranjang(pathBuilder);
               for(int x=0;x<isiKeranjang.size();x++){
                 updateKeranjang<<x+1<<"|";
@@ -78,7 +116,11 @@ void hapusKeranjang(User &data){
                   }
                 }
                 updateKeranjang<<endl;
-              }
+              }      
+              // ==============================
+              cout<<"Barang berhasil di hapus!"<<endl;
+              cin.ignore();
+              jeda();
             }
           }
         }
@@ -104,13 +146,19 @@ void kurangiKeranjang(User &data){
 
   if(hitungLine(pathBuilder) != 0){
     Array2D<string> isiKeranjang = loadData(pathBuilder);
-    outBarang(isiKeranjang, true);
+    outBarang(isiKeranjang, true, false, false, true);
     cout<<"pilih id barang yg ingin dikurangi jumlahnya : ";
     if(inputValidation(pilId)){
       if(pilId <= 0 || pilId > isiKeranjang.size()){
-        cout<<"pilih id yang valid!"<<endl;
-        cin.ignore();
-        jeda();
+        if(pilId == 0){
+          cin.ignore();
+          jeda();
+          return;
+        } else{
+          cout<<"pilih id yang valid!"<<endl;
+          cin.ignore();
+          jeda();
+        }
       } else{
         cout<<hapus;
         for(int i=0;i<isiKeranjang.size();i++){
@@ -124,7 +172,7 @@ void kurangiKeranjang(User &data){
                   showStokBarang.insert(showStokBarang.begin(), copyElement);
                   copyElementSize = copyElement.size();
                   for(int i=0;i<copyElementSize;i++){
-                    copyElement.pop();
+                    copyElement.pop_back();
                   }
                   break;
                 }
@@ -132,22 +180,22 @@ void kurangiKeranjang(User &data){
               for(int i=0;i<showStokBarang.size();i++){
                 showStokBarang[i].erase(showStokBarang[i].begin());
               }
-              cout<<"data stok yang tersedia di database"<<endl;
-              outBarang(showStokBarang);
-              outBarang(showStokBarang);
+              // cout<<"data stok yang tersedia di database"<<endl;
+              // outBarang(showStokBarang);
+              // // outBarang(showStokBarang);
 
               copyElement = isiKeranjang[i];
               showStokBarang.insert(showStokBarang.begin(), copyElement);
               copyElementSize = copyElement.size();
               for(int i=0;i<copyElementSize;i++){
-                copyElement.pop();
+                copyElement.pop_back();
               }
               for(int i=0;i<showStokBarang.size();i++){
                 showStokBarang[i].erase(showStokBarang[i].begin());
                 showStokBarang.erase(showStokBarang.begin()+1);
               }
 
-              cout<<"data stok yang ingin diedit"<<endl;
+              cout<<"data barang yang ingin dikurangi"<<endl;
               outBarang(showStokBarang, false, false, true);
               break;
             }
@@ -163,40 +211,92 @@ void kurangiKeranjang(User &data){
             
             cout<<"masukkan jumlah baru : ";
             if(inputValidation(jmlNew)){
-              if(jmlNew > stoi(dataBarang[j][3])){
-                cout<<"anda memasukkan jumlah melebihi stok\n";
+              if(jmlNew > stoi(isiKeranjang[i][3])){
+                cout<<"jika ingin menambah barang, masuk ke menu tambah barang.\n";
                 cin.ignore();
                 jeda();
                 break;
               } else if(jmlNew == 0 || jmlNew < 0){
-                cout<<"minimal barang 1, silahkan hapus barang jika 0\n";
+                cout<<"minimal barang 1, silahkan hapus barang jika 0.\n";
                 cin.ignore();
                 jeda();
                 break;
               } else{
                 int harga;
                 harga = stoi(isiKeranjang[i][4])/stoi(isiKeranjang[i][3]);
-                int totalTmp;
+                int totalNew;
+                int jmlOld = stoi(isiKeranjang[i][3]);
                 isiKeranjang[i][3] = to_string(jmlNew); //------------
-                totalTmp = jmlNew * harga;
-                isiKeranjang[i][4] = to_string(totalTmp);
+                totalNew = jmlNew * harga;
+                isiKeranjang[i][4] = to_string(totalNew);
                 for(int i=0;i<isiKeranjang.size();i++){
                   isiKeranjang[i].erase(isiKeranjang[i].begin());
                 }
                 cout<<hapus;
-                
+                cout<<"data baru keranjang yang telah dikurangi"<<endl;
                 outBarang(isiKeranjang);
                 cout<<"apakah anda yakin ingin mengganti?\n(y/n) > ";
                 cin>>konf;
                 if(konf == "y" || konf == "Y"){
-                  ofstream tulis(pathKeranjang + "/" + data.getNamaUser() + ".txt");
+                  // =====================================================
+                  string pathFileBarang = pathKategori + "/" + isiKeranjang[i][1] + "/barang/" + isiKeranjang[i][0] + ".txt";
+                  // pathBuilder = pathKeranjang + "/" + data.getNamaUser() + ".txt";
+                  // ===============
+                  int jmlHapusBarang = jmlOld - jmlNew;
+                  // ===============
+                  
+                  int idAwalBarang = 0;
+                  int stokBarang = 0;
+                  int jmlTotalHapusBarang = 0;
+                  if(hitungLine(pathFileBarang) != 0){
+                    stokBarang = hitungLine(pathFileBarang);
+                    ifstream bacaExBarang(pathFileBarang);
+                    string line;
+                    while (getline(bacaExBarang, line)){
+                      idAwalBarang = stoi(line);
+                      break;
+                    }
+                    
+                    ofstream hapusBarang(pathFileBarang);
+                    jmlTotalHapusBarang = jmlHapusBarang + stokBarang;
+                    idAwalBarang -= jmlHapusBarang;
+                    for(int i=0;i<jmlTotalHapusBarang;i++){
+                      hapusBarang<<idAwalBarang<<endl;
+                      idAwalBarang++;
+                    }
+                  } else{
+                    ofstream hapusBarang(pathFileBarang);
+                    for(int i=0;i<jmlHapusBarang;i++){
+                      hapusBarang<<i+1<<endl;
+                    }
+                  }
+                  fetchExBarang(isiKeranjang[i][1]);
+
+                  // isiKeranjang.erase(isiKeranjang.begin()+i);
+                  // for(int j=0;j<isiKeranjang.size();j++){
+                  //   isiKeranjang[j].erase(isiKeranjang[j].begin());
+                  // }
+
+                  // ofstream updateKeranjang(pathBuilder);
+                  // for(int x=0;x<isiKeranjang.size();x++){
+                  //   updateKeranjang<<x+1<<"|";
+                  //   for(int j=0;j<isiKeranjang[x].size();j++){
+                  //     updateKeranjang<<isiKeranjang[x][j];
+                  //     if(isiKeranjang[x].size() - 1 != j){
+                  //       updateKeranjang<<"|";
+                  //     }
+                  //   }
+                  //   updateKeranjang<<endl;
+                  // }      
+                  // =====================================================
+                  ofstream updateKeranjang(pathBuilder);
 
                   for(int i=0;i<isiKeranjang.size();i++){
-                    tulis<<i+1<<"|";
+                    updateKeranjang<<i+1<<"|";
                     for(int j=0;j<isiKeranjang[i].size(); j++){
-                      tulis<<isiKeranjang[i][j]<<"|";
+                      updateKeranjang<<isiKeranjang[i][j]<<"|";
                     }
-                    tulis<<endl;
+                    updateKeranjang<<endl;
                   }
                 }
               }
@@ -228,9 +328,10 @@ void addKeranjang(User &data){
 
   string path;
   Array2D<string> barangPilihan;
+  Array2D<string> oldData;
   Array2D<string> dataBarang;
   Array2D<string> barangFix;
-
+  bool isOld = true;
   int line = 0;
 
   do{
@@ -239,9 +340,18 @@ void addKeranjang(User &data){
     path = pathKategori + "/" + pilKategori + "/" + pilKategori + ".txt";
     if(hitungLine(path) != 0){
       dataBarang = loadData(path);
-
+      // for(int i=0;i<dataBarang.size();i++){
+      //   dataBarang[i].erase(dataBarang[i].begin());
+      // }
       cout<<hapus;
       cout<<garis;
+      if(isOld){
+        oldData = loadData(pathBuilder);
+        for(int i=0;i<oldData.size();i++){
+          oldData[i].erase(oldData[i].begin());
+        }
+        isOld = false;
+      }
       if(hitungLine(pathBuilder) != 0 && barangPilihan.size() == 0){
         barangPilihan = loadData(pathBuilder);
         for(int i=0;i<barangPilihan.size();i++){
@@ -256,13 +366,19 @@ void addKeranjang(User &data){
       }
       cout<<"data pada kategori "<<pilKategori<<endl;
       cout<<garis;
-      outBarang(dataBarang, true, false);
+      outBarang(dataBarang, true, false, false, false, true);
       cout<<"masukkan id barang yang ingin dipilih : ";
       if(inputValidation(id)){
         if(id <= 0 || id > hitungLine(path)){
-          cout<<"pilihan tidak ada"<<endl;
-          cin.ignore();
-          jeda();
+          if(id == 0){
+            cin.ignore();
+            jeda();
+            pilihan = "y";
+          } else{
+            cout<<"pilihan tidak ada"<<endl;
+            cin.ignore();
+            jeda();
+          }
           pilihan = "y";
         } else{
           bool isNew = true;
@@ -282,12 +398,12 @@ void addKeranjang(User &data){
                 if(!isNew){
                   for(int j=0;j<barangPilihan.size();j++){
                     if(barangPilihan[j][0] == barangFix[i][1]){
-                      if(barangPilihan[j][2] != barangFix[i][3]){
+                      if("0" != barangFix[i][3]){
                         cout<<"masukkan jumlah "<<barangFix[i][1]<<" yg ingin dibeli : ";
                         if(inputValidation(jml)){
-                          int jmlTmp = stoi(barangPilihan[j][2]);
-                          jmlTmp += jml;
-                          if(jmlTmp > stoi(barangFix[i][3])){
+                          // int jmlTmp = stoi(barangPilihan[j][2]);
+                          // jmlTmp += jml;
+                          if(jml > stoi(barangFix[i][3])){
                             cout<<"anda memasukkan barang lebih dari stok!\n";
                             cin.ignore();
                             jeda();
@@ -296,12 +412,35 @@ void addKeranjang(User &data){
                             cin.ignore();
                             jeda();
                           } else{
+                            int jmlTmp = stoi(barangPilihan[j][2]);
+                            jmlTmp += jml;
                             int totalHarga;
                             totalHarga = jmlTmp * stoi(barangFix[i][4]);
                             barangPilihan[j][2] = to_string(jmlTmp);
                             barangPilihan[j][3] = to_string(totalHarga);
                           
                             barangFix[i][3] = to_string(jmlTmp);
+                            // =========================================
+                            for(int j=0;j<dataBarang.size();j++){
+                              if(dataBarang[j][1] == barangFix[i][1]){
+                                int jmlFinal = stoi(dataBarang[j][3]);
+                                jmlFinal -= jml;
+                                dataBarang[j][3] = to_string(jmlFinal);
+                                barangFix[j][1] = to_string(jmlFinal);
+                                break;
+                              }
+                            }
+                            ofstream updateBarang(path);
+                            for(int j=0;j<dataBarang.size();j++){
+                              for(int k=0;k<dataBarang[j].size();k++){
+                                updateBarang<<dataBarang[j][k];
+                                if(dataBarang[j].size() - 1 != k){
+                                  updateBarang<<"|";
+                                }
+                              }
+                              updateBarang<<endl;
+                            }
+                            // =========================================
                           }
                         } else{
                           invalidInput();
@@ -326,12 +465,33 @@ void addKeranjang(User &data){
                     } else{
                       Array1D<string> barangTmp;
                       int totalHarga;
-                      barangTmp.push(barangFix[i][1]);
-                      barangTmp.push(barangFix[i][2]);
-                      barangTmp.push(to_string(jml));
+                      barangTmp.push_back(barangFix[i][1]);
+                      barangTmp.push_back(barangFix[i][2]);
+                      barangTmp.push_back(to_string(jml));
                       totalHarga = jml * stoi(barangFix[i][4]);
-                      barangTmp.push(to_string(totalHarga));
-                      barangPilihan.push(barangTmp);
+                      barangTmp.push_back(to_string(totalHarga));
+                      barangPilihan.push_back(barangTmp);
+                      // =======================
+                      for(int j=0;j<dataBarang.size();j++){
+                        if(dataBarang[j][1] == barangFix[i][1]){
+                          int jmlFinal = stoi(dataBarang[j][3]);
+                          jmlFinal -= jml;
+                          dataBarang[j][3] = to_string(jmlFinal);
+                          barangFix[j][1] = to_string(jmlFinal);
+                          break;
+                        }
+                      }
+                      ofstream updateBarang(path);
+                      for(int j=0;j<dataBarang.size();j++){
+                        for(int k=0;k<dataBarang[j].size();k++){
+                          updateBarang<<dataBarang[j][k];
+                          if(dataBarang[j].size() - 1 != k){
+                            updateBarang<<"|";
+                          }
+                        }
+                        updateBarang<<endl;
+                      }
+                      // =======================
                     }
                   } else{
                     invalidInput();
@@ -348,9 +508,12 @@ void addKeranjang(User &data){
         invalidInput();
         pilihan = "y";
       }
+    } else if(pilKategori == ""){
+      return;
     } else{
       dataKosong();
-      return;
+      pilihan = "y";
+      // return;
     }
   } while (pilihan == "Y" || pilihan == "y");
 
@@ -368,9 +531,26 @@ void addKeranjang(User &data){
         cout<<"apakah anda ingin menyimpan ke keranjang?\n(y/n) > ";
         cin>>pilihan;
         if(pilihan == "Y" || pilihan == "y"){
+          // {}
           ofstream tulis(pathKeranjang + "/" + data.getNamaUser() + ".txt");
-
           for(int i=0;i<barangPilihan.size();i++){
+            bool isUpdated = false;
+            // ===================================
+            for(int j=0;j<oldData.size();j++){
+              if(oldData[j][0] == barangPilihan[i][0] && oldData[j][1] == barangPilihan[i][1]){
+                if(oldData[j][2] != barangPilihan[i][2]){
+                  isUpdated = true;
+                  int jmlUpdate = stoi(barangPilihan[i][2]);
+                  jmlUpdate -= stoi(oldData[j][2]);
+                  checkoutFifo(barangPilihan[i][1], barangPilihan[i][0], to_string(jmlUpdate));
+                  break;
+                }
+              } 
+            }
+            if(!isUpdated){
+              checkoutFifo(barangPilihan[i][1], barangPilihan[i][0], barangPilihan[i][2]);
+            }
+            // ===================================
             tulis<<i+1<<"|";
             for(int j=0;j<barangPilihan[i].size(); j++){
               tulis<<barangPilihan[i][j];
@@ -380,19 +560,25 @@ void addKeranjang(User &data){
             }
             tulis<<endl;
           }
+          
         } else{
           cout<<"apakah anda yakin tidak ingin menyimpan?\ndata tidak bisa dikembalikan!\n(y/n) > ";
           cin>>pilihan;
           if(pilihan == "Y" || pilihan == "y"){
-            for(int i = 0;i<barangPilihan.size();i++){
-              for(int j=0;j<barangFix.size();j++){
-                if(barangPilihan[i][0] == barangFix[j][1]){
-                  int jmlTmp = stoi(barangPilihan[i][2]);
-                  jmlTmp += stoi(barangFix[j][3]);
-                  barangFix[j][3] = to_string(jmlTmp);
-                }
-              }
-            }
+
+            // gapenting
+            // =========================
+            // for(int i = 0;i<barangPilihan.size();i++){
+            //   for(int j=0;j<barangFix.size();j++){
+            //     if(barangPilihan[i][0] == barangFix[j][1]){
+            //       int jmlTmp = stoi(barangPilihan[i][2]);
+            //       jmlTmp += stoi(barangFix[j][3]);
+            //       barangFix[j][3] = to_string(jmlTmp);
+            //     }
+            //   }
+            // }
+            // =========================
+            
             // otomatis
             Array1D<string> kategori = bacaFolder(pathKategori);
             for(int i=0;i<kategori.size();i++){
@@ -413,7 +599,7 @@ void addKeranjang(User &data){
 void checkout(User &data){
 	string pathFileKeranjang = pathKeranjang + "/" + data.getNamaUser() + ".txt";
   string pathFileBarang;
-  bool isValidCheckout = true;
+  // bool isValidCheckout = true;
   bool isPriority;
 
   if(hitungLine(pathFileKeranjang) != 0){
@@ -423,23 +609,23 @@ void checkout(User &data){
     Array2D<string> allBarang;
     
 
-    for(int i=0;i<keranjang.size();i++){
-      pathFileKeranjang = pathKategori+"/"+keranjang[i][2]+"/"+keranjang[i][2]+".txt";
-      allBarang = loadData(pathFileKeranjang);
-      for(int j=0;j<allBarang.size();j++){
-        if(keranjang[i][1] == allBarang[j][1] && keranjang[i][2] == allBarang[j][2]){
-          int jmlBaru = stoi(allBarang[j][3]);
-          jmlBaru -= stoi(keranjang[i][3]);
-          allBarang[j][3] = to_string(jmlBaru);
-          if(stoi(allBarang[j][3]) < 0){
-            isValidCheckout = false;
-          }
-          break;
-        }
-      }
-    }
+    // for(int i=0;i<keranjang.size();i++){
+    //   pathFileKeranjang = pathKategori+"/"+keranjang[i][2]+"/"+keranjang[i][2]+".txt";
+    //   allBarang = loadData(pathFileKeranjang);
+    //   for(int j=0;j<allBarang.size();j++){
+    //     if(keranjang[i][1] == allBarang[j][1] && keranjang[i][2] == allBarang[j][2]){
+    //       int jmlBaru = stoi(allBarang[j][3]);
+    //       jmlBaru -= stoi(keranjang[i][3]);
+    //       allBarang[j][3] = to_string(jmlBaru);
+    //       if(stoi(allBarang[j][3]) < 0){
+    //         isValidCheckout = false;
+    //       }
+    //       break;
+    //     }
+    //   }
+    // }
     
-    if(isValidCheckout){
+    // if(isValidCheckout){
       Array1D<string> listAntrian;
       Array1D<string> listAntrianPriority;
       Array2D<string> listId;
@@ -460,11 +646,11 @@ void checkout(User &data){
           if (pos != string::npos) {
             id = line.substr(0, pos);
             line.erase(0, pos + delimiterPriority.length());
-            listAntrianPriority.push(id);
-            listAntrianPriority.push(line);
-            listIdPriority.push(listAntrianPriority);
-            listAntrianPriority.pop();
-            listAntrianPriority.pop();
+            listAntrianPriority.push_back(id);
+            listAntrianPriority.push_back(line);
+            listIdPriority.push_back(listAntrianPriority);
+            listAntrianPriority.pop_back();
+            listAntrianPriority.pop_back();
           }
         }
         ifstream baca(pathFileAntrian);
@@ -473,11 +659,11 @@ void checkout(User &data){
           if (pos != string::npos) {
             id = line.substr(0, pos);
             line.erase(0, pos + delimiter.length());
-            listAntrian.push(id);
-            listAntrian.push(line);
-            listId.push(listAntrian);
-            listAntrian.pop();
-            listAntrian.pop();
+            listAntrian.push_back(id);
+            listAntrian.push_back(line);
+            listId.push_back(listAntrian);
+            listAntrian.pop_back();
+            listAntrian.pop_back();
             jmlAntrian++;
           }
         }
@@ -489,8 +675,6 @@ void checkout(User &data){
         // mendapatkan nilai akhir
         if(listIdPriority.size() != 0){
           jmlAntrianPriority = stoi(listIdPriority[listIdPriority.size()-1][0]);
-        } else{
-          jmlAntrianPriority = jmlAntrian;
         }
 
         for(int i=0;i<listIdPriority.size();i++){
@@ -544,21 +728,24 @@ void checkout(User &data){
       fs::copy(pathFileAntrianUser, pathFileAntrianNew);
       remove(pathFileAntrianUser.c_str());
 
+// ga dipake
+// ===============================
+      // ofstream update(pathFileKeranjang);
+      // for(int i=0;i<allBarang.size();i++){
+      //   for(int j=0;j<allBarang[i].size();j++){
+      //     update<<allBarang[i][j];
+      //     if(allBarang[i].size() - 1 != j){
+      //       update<<"|";
+      //     }
+      //   }
+      //   update<<endl;
+      // }
+// ===============================
 
-      ofstream update(pathFileKeranjang);
-      for(int i=0;i<allBarang.size();i++){
-        for(int j=0;j<allBarang[i].size();j++){
-          update<<allBarang[i][j];
-          if(allBarang[i].size() - 1 != j){
-            update<<"|";
-          }
-        }
-        update<<endl;
-      }
-
-      for(int i=0;i<keranjang.size();i++){
-        checkoutFifo(keranjang[i][2], keranjang[i][1], keranjang[i][3]);
-      }
+// percobaan
+      // for(int i=0;i<keranjang.size();i++){
+      //   checkoutFifo(keranjang[i][2], keranjang[i][1], keranjang[i][3]);
+      // }
       
       Array1D<string> kategori = bacaFolder(pathKategori);
       for(int i=0;i<kategori.size();i++){
@@ -568,11 +755,11 @@ void checkout(User &data){
       cout<<"Barang berhasil di checkout!"<<endl;
       cin.ignore();
       jeda();
-    } else{
-      cout<<"ada barang yang sudah habis silahkan edit keranjang!\n";
-      cin.ignore();
-      jeda();
-    }
+    // } else{
+    //   cout<<"ada barang yang sudah habis silahkan edit keranjang!\n";
+    //   cin.ignore();
+    //   jeda();
+    // }
 
   } else{
     cout<<"keranjang masih kosong!\nsilahkan mengisi keranjang terlebih dahulu\n";
@@ -580,7 +767,6 @@ void checkout(User &data){
     jeda();
   }  
 }
-
 
 bool isDbExist(){
   Array1D<string> kategori = bacaFolder(pathKategori);
@@ -611,8 +797,8 @@ void logPesanan(User &data){
     ifstream bacaLog(path);
     int i=0;
     while (getline(bacaLog, baris)){
-       isiFile[i] = baris;
-       i++;
+      isiFile[i] = baris;
+      i++;
     }
     
     cout<<hapus;
