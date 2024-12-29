@@ -3,34 +3,56 @@ void strukBuilder(int banyakBarang, string *namaBarang, string *totalBarang,
 
 	if(!fs::exists(pathStruk + "/" + namaPelanggan)){
 		createFolder(pathStruk + "/" + namaPelanggan);
-
 	}
 	ofstream tulisLog(pathStruk + "/" + namaPelanggan + "/" + namaPelanggan + ".txt", ios::app);
 	int banyakLog = hitungLine(pathStruk + "/" + namaPelanggan + "/" + namaPelanggan + ".txt");
 	tulisLog<<to_string(banyakLog+1) +" - " + namaPelanggan + ".txt"<<endl;
 	tulisLog.close();
 
+	int* hargaSatuan = new int[banyakBarang];
+	for (int i = 0; i < banyakBarang; i++) {
+		hargaSatuan[i] = stoi(totalHarga[i])/stoi(totalBarang[i]);
+	}
+	
 	ofstream tulis(pathStruk + "/" + namaPelanggan + "/" + to_string(banyakLog+1) +" - " + namaPelanggan + ".txt");
 
-	tulis<<"============================================"<<endl;
-	tulis<<"| nama pelanggan    : "<<setw(21)<<setiosflags(ios::left)<<namaPelanggan<<"|"<<endl;
-	tulis<<"| nama kasir        : "<<setw(21)<<setiosflags(ios::left)<<data.getNamaUser()<<"|"<<endl;
-	tulis<<"| tanggal pembelian : "<<setw(21)<<setiosflags(ios::left)<<getTimestamp()<<"|"<<endl;
-	tulis<<"============================================"<<endl;
-	tulis<<"| Nama Barang        Jumlah Barang   Harga |"<<endl;
-	tulis<<"============================================"<<endl;
+	tulis<<"=============================================="<<endl;
+	tulis<<"|                                            |"<<endl;
+	tulis<<"|                 KONDE MART                 |"<<endl;
+	tulis<<"|      Jl. Imogiri Timur KM 7.6 Grojogan     |"<<endl;
+	tulis<<"|        Wirokerten BGTP Bantul DIY          |"<<endl;
+	tulis<<"|                                            |"<<endl;
+	tulis<<"----------------------------------------------"<<endl;
+	// tulis<<"| nama pelanggan    : "<<setw(23)<<setiosflags(ios::left)<<namaPelanggan<<"|"<<endl;
+	// tulis<<"| nama kasir        : "<<setw(23)<<setiosflags(ios::left)<<data.getNamaUser()<<"|"<<endl;
+	// tulis<<"| tanggal pembelian : "<<setw(23)<<setiosflags(ios::left)<<getTimestamp()<<"|"<<endl;
+	tulis<<namaPelanggan<<" : "<<data.getNamaUser()<<" "<<getTimestamp()<<endl;
+	tulis<<"----------------------------------------------"<<endl;
 	for (int i = 0; i < banyakBarang; i++) {
-		tulis << "| " << setw(23) << setiosflags(ios::left) << namaBarang[i]
-			<< setw(7) << setiosflags(ios::left) << totalBarang[i]
-			<< setw(10) << setiosflags(ios::right) << totalHarga[i]
-			<< " |"
+		// tulis << "| " << setw(23) << setiosflags(ios::left) << namaBarang[i]
+		// 	<< setw(7) << setiosflags(ios::left) <<("x"+totalBarang[i])
+		// 	<< setw(10) << setiosflags(ios::right) << totalHarga[i]
+		// 	<< " |"
+		// 	<< resetiosflags(ios::right)
+		// 	<< endl;
+		string harga = totalBarang[i] + "x" + to_string(hargaSatuan[i]);
+		tulis << namaBarang[i]<<endl
+			<< setw(30) << setiosflags(ios::left) << ("( "+totalBarang[i] + " x " + to_string(hargaSatuan[i])+" )") << "="
+			<< setw(15) << setiosflags(ios::right) << totalHarga[i]
 			<< resetiosflags(ios::right)
 			<< endl;
 	}
 
-	tulis<<"============================================"<<endl;
-	tulis<<"| total pembelian   :"<<setw(21)<<setiosflags(ios::right)<<totalPembelian<<" |"<<endl;
-	tulis<<"============================================"<<endl;
+	tulis<<"----------------------------------------------"<<endl;
+	string harga = "Rp. " + to_string(totalPembelian);
+	tulis<<"| total pembelian"<<setw(27)<<setiosflags(ios::right)<<harga<<" |"<<endl;
+	tulis<<"----------------------------------------------"<<endl;
+	tulis<<"|                                            |"<<endl;
+	tulis<<"|        MATUR NUWUN SUDAH BERBELANJA        |"<<endl;
+	tulis<<"|  IG : kondemart.id, Telegram : konde mart  |"<<endl;
+	tulis<<"|        Yuk NgoNDe Lagi Setiap Hari         |"<<endl;
+	tulis<<"|                                            |"<<endl;
+	tulis<<"=============================================="<<endl;
 
 	tulis.close();
 
