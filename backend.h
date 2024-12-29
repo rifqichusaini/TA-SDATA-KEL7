@@ -1,3 +1,4 @@
+// #include <bits/stdc++.h> 
 #include <algorithm>
 #include <chrono>
 #include <cstdio>
@@ -7,8 +8,6 @@
 #include <iostream>
 #include <sstream>
 
-// #include <bits/stdc++.h> 
-
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -17,6 +16,7 @@ namespace fs = std::filesystem;
 #include"output.h"
 #include"masuk.h"
 
+#include"avl.h"
 #include"implementasi.h"
 #include"admin.h"
 #include"user.h"
@@ -62,6 +62,7 @@ public:
               jeda();
               cout<<hapus;
               cout<<"Bye, semoga harimu menyenangkan!"<<endl;
+              return;
             } else{
               cout<<"pilihan tidak ada!"<<endl;
               cin.ignore();
@@ -106,7 +107,7 @@ public:
 void Menu::menuAdmin(){
   int pilihan;
   bool isInputValid = true;
- 
+
   do{ 
     cout<<hapus;
     cout<<garis;
@@ -119,6 +120,7 @@ void Menu::menuAdmin(){
     cout<<" 3. Hapus Barang "<<endl;
     cout<<" 4. Update Barang"<<endl;
     cout<<" 5. List Barang"<<endl;
+    cout<<" 6. List kategori tersedia"<<endl;
     cout<<"masukkan pilihan : ";
     if(inputValidation(pilihan)){
       if(pilihan == 0){
@@ -129,7 +131,7 @@ void Menu::menuAdmin(){
       } else if(pilihan == 2){
         tambahKategori();
       } else if(pilihan == 4){
-        cout<<"1. update stock\n";
+        cout<<"1. update stock (tambah barang)\n";
         cout<<"2. update nama barang\n";
         cout<<"3. update nama kategori\n";
         cout<<"masukkan pilihan : ";
@@ -185,6 +187,49 @@ void Menu::menuAdmin(){
           isInputValid = false;
           invalidInput();
         }
+      } else if(pilihan == 6){
+        cout<<" 1. tampilkan inorder\n";
+        cout<<" 2. tampilkan preorder\n";
+        cout<<" 3. tampilkan postorder\n";
+        cout<<"masukkan pilihan : ";
+        if(inputValidation(pilihan)){
+          Array1D<string> kategori;
+          ifstream bacaKategori(pathFileKategori);
+          string line, id, namaKategori;
+          while (getline(bacaKategori, line)){
+            istringstream stream(line);
+            getline(stream, id, '|');
+            getline(stream, namaKategori);
+            kategori.push_back(namaKategori);
+          }
+          bacaKategori.close();
+          // Node* kategori = createTree();
+          Node *root = nullptr; 
+          for(int i=0;i<kategori.size();i++){
+            root = insert(root, kategori[i]);
+          }
+          
+          if(pilihan == 1){
+            inorder(root);
+            cin.ignore();
+            jeda();
+          } else if(pilihan == 2){
+            preorder(root);
+            cin.ignore();
+            jeda();
+          } else if(pilihan == 3){
+            postorder(root);
+            cin.ignore();
+            jeda();
+          } else{
+            cout<<"pilihan tidak tersedia!\n";
+            cin.ignore();
+            jeda();
+          }
+        } else {
+          isInputValid = false;
+          invalidInput();
+        }
       }
       else{
         cout<<"pilihan tidak tersedia!"<<endl;
@@ -210,9 +255,9 @@ void Menu::menuUser(){
     cout<<garis;
     cout<<"Menu : "<<endl;
     cout<<" 0. Logout"<<endl;
-    cout<<" 1. Tambah barang baru ke keranjang"<<endl;
+    cout<<" 1. Tambah barang ke keranjang"<<endl;
     cout<<" 2. Hapus Barang dari keranjang"<<endl;
-    cout<<" 3. Edit jumlah Barang dari keranjang"<<endl;
+    cout<<" 3. kurangi jumlah Barang dari keranjang"<<endl;
     cout<<" 4. lihat keranjang"<<endl;
     cout<<" 5. List Barang"<<endl;
     cout<<" 6. lihat history transaksi"<<endl;
@@ -251,6 +296,7 @@ void Menu::menuUser(){
       } else if(pilihan == 6){
         logPesanan(L);
       } else if(pilihan == 7){
+        
         checkout(L);
       }
       else{
