@@ -3,37 +3,37 @@ void strukBuilder(int banyakBarang, string *namaBarang, string *totalBarang,
 
 // ganti Lifo
 void checkoutFifo(string kategori, string barang, string jmlCheckout){
-  string id;
-  string pathFileBarang = pathKategori + "/" + kategori + "/barang/" + barang + ".txt" ;
-  int jmlBarang = hitungLine(pathFileBarang);
-  ifstream baca(pathFileBarang);
+	string id;
+	string pathFileBarang = pathKategori + "/" + kategori + "/barang/" + barang + ".txt" ;
+	int jmlBarang = hitungLine(pathFileBarang);
+	ifstream baca(pathFileBarang);
 
-  string *isiBarang;
-  int jmlBeli = stoi(jmlCheckout);
-  isiBarang = new string[jmlBarang];
+	string *isiBarang;
+	int jmlBeli = stoi(jmlCheckout);
+	isiBarang = new string[jmlBarang];
 
-  if (jmlBeli > jmlBarang) {
-      cout << "Error: Jumlah beli melebihi jumlah barang yang tersedia." << endl;
-      delete[] isiBarang;
-      return;
-  }
+	if (jmlBeli > jmlBarang) {
+		cout << "Error: Jumlah beli melebihi jumlah barang yang tersedia." << endl;
+		delete[] isiBarang;
+		return;
+	}
 
-  int i=0;
-  while (getline(baca, id)) {
-    isiBarang[i] = id;
-    i++;
-  }
-  
-  for (int i = 0; i < jmlBarang - jmlBeli; ++i) {
-      isiBarang[i] = isiBarang[jmlBeli + i];
-  }
+	int i=0;
+	while (getline(baca, id)) {
+		isiBarang[i] = id;
+		i++;
+	}
+	
+	for (int i = 0; i < jmlBarang - jmlBeli; ++i) {
+		isiBarang[i] = isiBarang[jmlBeli + i];
+	}
 
-  ofstream tulis(pathFileBarang);
-  for (int i = 0; i < jmlBarang - jmlBeli; ++i) {
-      tulis<<isiBarang[i]<<endl;
-  }
-  
-  delete[] isiBarang;
+	ofstream tulis(pathFileBarang);
+	for (int i = 0; i < jmlBarang - jmlBeli; ++i) {
+		tulis<<isiBarang[i]<<endl;
+	}
+
+	delete[] isiBarang;
 }
 
 void konfBarangLifo(string path, User &data){
