@@ -236,8 +236,8 @@ Don't forget to give the project a star! Thanks again!
 
 ### Top contributors:
 
-<a href="https://github.com/othneildrew/Best-README-Template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=othneildrew/Best-README-Template" alt="contrib.rocks image" />
+<a href="https://github.com/rifqichusaini/TA-SDATA-KEL7/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=rifqichusaini/TA-SDATA-KEL7" alt="contrib.rocks image" />
 </a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -247,7 +247,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the Unlicense License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `MIT License.txt` for more information or click <a href="https://mit-license.org/">the link</a> .
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -256,9 +256,11 @@ Distributed under the Unlicense License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Ihza Ananda      - [@ihza ananda rachman](https://www.facebook.com/ihzaananda.rachman.1) - 2300018284@webmail.uad.ac.id
+Rifqi Chusaini   - [@rifqi chusaini](https://facebook.com/rifqi.chusaini) - 2300018289@webmail.uad.ac.id
+Salman Al Fathin - [@kirishima hikaru](https://facebook.com/kirishima.hikaru) - 2300018314@webmail.uad.ac.id
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [GitHub](https://github.com/rifqichusaini/TA-SDATA-KEL7)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
