@@ -256,9 +256,9 @@ Distributed under the MIT License. See `MIT License.txt` for more information or
 <!-- CONTACT -->
 ## Contact
 
-Ihza Ananda      - [@ihza ananda rachman](https://www.facebook.com/ihzaananda.rachman.1) - 2300018284@webmail.uad.ac.id
-Rifqi Chusaini   - [@rifqi chusaini](https://facebook.com/rifqi.chusaini) - 2300018289@webmail.uad.ac.id
-Salman Al Fathin - [@kirishima hikaru](https://facebook.com/kirishima.hikaru) - 2300018314@webmail.uad.ac.id
+* Ihza Ananda      - [@ihza ananda rachman](https://www.facebook.com/ihzaananda.rachman.1) - 2300018284@webmail.uad.ac.id
+* Rifqi Chusaini   - [@rifqi chusaini](https://facebook.com/rifqi.chusaini) - 2300018289@webmail.uad.ac.id
+* Salman Al Fathin - [@kirishima hikaru](https://facebook.com/kirishima.hikaru) - 2300018314@webmail.uad.ac.id
 
 Project Link: [GitHub](https://github.com/rifqichusaini/TA-SDATA-KEL7)
 
